@@ -43,10 +43,9 @@ def print_len_satisfy(satisfy: List[Dict[str, str]]) -> None:
 def view_vacancies() -> List[Dict[str, str]]:
     """Получает вакансии с сайта HeadHunter."""
     n: int    # Счётчик просмотренных вакансий на одной странице.
-    satisfy: List[Dict[str, str]]
+    satisfy: List[Dict[str, str]] = []
     base_url: str = 'https://spb.hh.ru'
     extra_url: str = '/search/vacancy?text=python&area=1&area=2'
-    satisfy: List[Dict[str, str]] = []
     CUR_NUM: int = 0
     headers: Dict[str, str]
     while True:
