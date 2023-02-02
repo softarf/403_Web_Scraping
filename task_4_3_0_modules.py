@@ -37,16 +37,17 @@ def here_and_now() -> str:
 
 def get_preferences(vacancy: Any) -> List[str]:
     """Получает описание должности и необходимых знаний."""
-    preferences: Any = (vacancy.find('div', class_='g-user-content')
-                          .find_all('div', class_='bloko-text'))
-    # Предпочтения: [Должностные обязанности, Требования к кондидатам.]
+    # Предпочтения: (Должностные обязанности, Требования к кондидатам).
     duty_require: List[str] = ['Не указано', 'Не указано']
-    item: Any
-    for item in preferences:
-        if item['data-qa'] == 'vacancy-serp__vacancy_snippet_responsibility':
-            duty_require[0] = item.text
-        elif item['data-qa'] == 'vacancy-serp__vacancy_snippet_requirement':
-            duty_require[1] = item.text
+    vacancy_content: Any = vacancy.find('div', class_='g-user-content')
+    if vacancy_content is not None:
+        preferences: Any = vacancy_content.find_all('div', class_='bloko-text')
+        item: Any
+        for item in preferences:
+            if item['data-qa'] == 'vacancy-serp__vacancy_snippet_responsibility':
+                duty_require[0] = item.text
+            elif item['data-qa'] == 'vacancy-serp__vacancy_snippet_requirement':
+                duty_require[1] = item.text
     return duty_require
 
 
