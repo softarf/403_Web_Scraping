@@ -56,8 +56,7 @@ def is_include(element: str, *args: Any) -> bool:
     flag: bool = False
     arg: Any
     for arg in args:
-        result = re.search(element, arg, flags=re.I)
-        if re.search(element, arg, flags=re.I) != None:
+        if re.search(element, arg, flags=re.I) is not None:
             flag = True
             break
     return flag
@@ -68,12 +67,12 @@ def get_wage(vacancy: Any) -> Tuple[str, str, str]:
     min_wage: str = 'Не указано'
     max_wage: str = 'Не указано'
     currency: str = 'Не указано'
+    salary: str
     wage_span: Any = vacancy.find('span', class_='bloko-header-section-3')
-    if wage_span != None:
+    if wage_span is not None:
         wage: str = wage_span.text
-        salary: str
         salary, currency = wage.rsplit(maxsplit=1)
-        if re.search(r'\d+\s\W\s\d+', salary, flags=re.I) != None:
+        if re.search(r'\d+\s\W\s\d+', salary, flags=re.I) is not None:
             min_wage = ''.join(salary.split()[:2])
             max_wage = ''.join(salary.split()[-2:])
         else:
@@ -88,6 +87,9 @@ def parse_vacancy(vacancies_list: List[Any], base_url: str,
                   satisfy_list: List[Dict[str, str]]) -> Tuple[int, List[Dict[str, str]]]:
     """Просматривает вакансии."""
     n: int = 0
+    min_wage: str
+    max_wage: str
+    currency: str
     satisfied_vacancy: Dict[str, str] = {}
     vacancy: Any
     for vacancy in vacancies_list:
@@ -110,18 +112,14 @@ def parse_vacancy(vacancies_list: List[Any], base_url: str,
         #   навыков ("Django" или "Flask") не востребовано, то вакансия игнорируется.
         if (town != 'Не указано' and is_include(find_skills[0], *duty_require)
                 and is_include(find_skills[1], *duty_require)):
-
             #       Сохраняет информацию о текущей вакансии.
             vacancy_href: str = 'Не указано'
             # vacancy_name: str = 'Не указано'  # Можно добавить.
             vacancy_a: Any = vacancy.find('a', class_='serp-item__title')
-            if vacancy_a != None:
+            if vacancy_a is not None:
                 vacancy_href = base_url + vacancy_a['href']
                 # vacancy_name = vacancy_a.text  # Можно добавить.
             company_name: str = vacancy.find('a', class_='bloko-link bloko-link_kind-tertiary').text
-            min_wage: str
-            max_wage: str
-            currency: str
             min_wage, max_wage, currency = get_wage(vacancy)
             satisfied_vacancy.clear()
             satisfied_vacancy = {
