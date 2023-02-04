@@ -42,29 +42,28 @@ def print_len_satisfy(satisfy: List[Dict[str, str]]) -> None:
 
 def view_vacancies() -> List[Dict[str, str]]:
     """Получает вакансии с сайта HeadHunter."""
-    n: int    # Счётчик просмотренных вакансий на одной странице.
+    n: int    # Счётчик вакансий, просмотренных на одной странице.
     satisfy: List[Dict[str, str]] = []
     base_url: str = 'https://spb.hh.ru'
-    extra_url: str = '/search/vacancy?text=python&area=1&area=2'
-    CUR_NUM: int = 0
+    next_page: Any = {'href': '/search/vacancy?text=python&area=1&area=2'}
+    PAGE_NUM: int = 0
     headers: Dict[str, str]
-    while True:
-        CUR_NUM, headers = get_headers(CUR_NUM)
+    while next_page is not None:
+        extra_url: str = next_page['href']
+        PAGE_NUM, headers = get_headers(PAGE_NUM)
         page_html: Any = get_page(base_url + extra_url, headers)
         if not (200 <= page_html.status_code < 400):
             print(" Что-то пошло не так...(страница не зарузилась)")
-            return satisfy
+            break
         page_soup: Any = BeautifulSoup(markup=page_html.text, features="html.parser")
         vacancy_serpent: Any = page_soup.find('div', class_='vacancy-serp-content')
         vacancies_list: List[Any] = vacancy_serpent.find_all('div', class_='serp-item')
         n, satisfy = parse_vacancy(vacancies_list, base_url, satisfy)
         #
-        print(f'{here_and_now()}   CUR_NUM ={CUR_NUM:>3}    Обработано вакансий:{n:>3}')
+        print(f'{here_and_now()}   Страница:{PAGE_NUM:>3}    Обработано вакансий:{n:>3}')
         #
-        next_page: Any = vacancy_serpent.select_one('div.pager > a')
-        if next_page is None:
-            return satisfy
-        extra_url = next_page['href']
+        next_page = vacancy_serpent.select_one('div.pager > a')
+    return satisfy
 
 
 def main():
@@ -76,11 +75,11 @@ def main():
 
     satisfy = view_vacancies()
 
+    # print('\n    Результаты выполнения:')
     print_len_satisfy(satisfy)
     res_name = produce_file_name(base_name)
     with open(res_name, 'wt', encoding='utf-8') as json_file:
         json.dump(satisfy, json_file, ensure_ascii=False, indent=2)
-    # print('\n    Результаты выполнения:')
     print(f"Результаты сохранены в файле: '{res_name}'")
     
     return
