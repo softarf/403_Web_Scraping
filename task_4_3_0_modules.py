@@ -24,15 +24,17 @@ def get_headers(cur_num: int) -> Tuple[int, Dict[str, str]]:
 
 def here_and_now() -> str:
     """Печатает текущее время и дату."""
-    today: datetime = datetime.today()
-    wday: str = today.strftime('%a')
-    day: str = today.strftime('%d')
-    month: str = today.strftime('%b')
-    year: str = today.strftime('%Y')
-    hour: str = today.strftime('%H')
-    minute: str = today.strftime('%M')
-    second: str = today.strftime('%S')
-    return f'Now: {wday}, {day} {month} {year} {hour}:{minute}:{second}'
+    # today: datetime = datetime.today()
+    # wday: str = today.strftime('%a')
+    # day: str = today.strftime('%d')
+    # month: str = today.strftime('%b')
+    # year: str = today.strftime('%Y')
+    # hour: str = today.strftime('%H')
+    # minute: str = today.strftime('%M')
+    # second: str = today.strftime('%S')
+    # return f'Now: {wday}, {day} {month} {year} {hour}:{minute}:{second}'
+    #                            Сократил код - надо писать так.
+    return datetime.now().strftime('Now: %a, %d %b %Y %H:%M:%S')
 
 
 def get_preferences(vacancy: Any) -> List[str]:
